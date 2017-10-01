@@ -1,13 +1,13 @@
 const _ = require('underscore')
 const axios = require('axios')
 
-module.exports = function (credentials = {}) {
-
-  let pub = {}
+module.exports = function (credentials) {
+  credentials = credentials || {}
+  var pub = {}
 
   if (missing_param(credentials, ['api_key', 'api_secret'])) return
 
-  let tools = require('./tools.js')(credentials)
+  var tools = require('./tools.js')(credentials)
 
   pub.call_api = function (config, params) {
     if (missing_param(config, ['path'])) return
