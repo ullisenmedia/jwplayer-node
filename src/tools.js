@@ -5,11 +5,13 @@ const querystring = require('query-string')
 const urlencode = require('urlencode')
 const utf8 = require('utf8')
 
-module.exports = function (config = {}, priv = {}) {
+module.exports = function (config, priv) {
+  config = config || {};
+  priv = priv || {};
 
-  let pub = {}
+  var pub = {}
 
-  let options = _.extend({
+  var options = _.extend({
     hostname: 'api.jwplatform.com',
     protocol: 'http',
     api_format: 'json'
@@ -19,7 +21,9 @@ module.exports = function (config = {}, priv = {}) {
   * return {string} url for api call
   */
   pub.get_api_call = function (path, params) {
-    let {hostname, protocol} = options
+    var hostname = options.hostname;
+    var protocol = options.protocol;
+
     return url_tools.format({
       hostname,
       protocol,
@@ -32,8 +36,9 @@ module.exports = function (config = {}, priv = {}) {
   * return {object} all params required to make the api call
   */
   priv.get_query = function (params) {
-    let {api_format, api_key} = options
-    let all_params = _.extend({
+    var api_format = options.api_format;
+    var api_key = options.api_key;
+    var all_params = _.extend({
       api_format,
       api_key,
       api_nonce: priv.get_nonce(),
@@ -47,7 +52,7 @@ module.exports = function (config = {}, priv = {}) {
   * @return {string} hashed api signature
   */
   priv.get_api_signature = function (params) {
-    let new_params = _.extend({}, params)
+    var new_params = _.extend({}, params)
     Object.keys(new_params).forEach(k => new_params[k] = utf8.encode(new_params[k])) /*utf8 encode all text params*/
     Object.keys(new_params).forEach(k => new_params[k] = urlencode(new_params[k])) /*url encode all text params*/
     new_params = Object.keys(new_params).sort().reduce((r, k) => (r[k] = new_params[k], r), {}) /*sort params by encoded name*/
@@ -58,8 +63,8 @@ module.exports = function (config = {}, priv = {}) {
   * @return {Number} 8 digit random number
   */
   priv.get_nonce = function () {
-    let min = 10000000
-    let max = 99999999
+    var min = 10000000
+    var max = 99999999
     return (Math.floor(Math.random() * (max-min)) + min).toString()
   }
 
